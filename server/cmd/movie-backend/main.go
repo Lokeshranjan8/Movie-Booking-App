@@ -5,39 +5,63 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"net/http"
+
+	//"fmt"
 	"log"
 	"os"
 	"github.com/joho/godotenv"
-	"http"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func main() {
-	err := godotenv.Load()
-	log.Print("hello")
-	if err != nil {
-		log.Println(err)
-		log.Fatal("error loading file")
-	}
+var (
+    collection *mongo.Collection
+    ctx        = context.TODO()
+)
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s ssl=disable",
-		os.Getenv("HOST"), os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"), os.Getenv("PORT"),
-	)
+func initMongo() {
+    // Load env if needed
+    _ = godotenv.Load()
 
-	log.Println("Connected to database successfully")
-	log.Printf("starting server at port %s", os.Getenv("PORT"))
-	log.Println("ssss",dsn)
-	log.Fatal(http.ListenAndServe(":" + os.Getenv("PORT"), r))
+    // Use either local or env-based URI
+    uri := os.Getenv("MONGO_URI")
+    if uri == "" {
+        uri = "mongodb://localhost:27017/"
+    }
 
+    clientOptions := options.Client().ApplyURI(uri)
+    client, err := mongo.Connect(ctx, clientOptions)
+    if err != nil {
+        log.Fatal("Failed to connect to MongoDB:", err)
+    }
+
+    // Ping to confirm connection
+    if err := client.Ping(ctx, nil); err != nil {
+        log.Fatal("Failed to ping MongoDB:", err)
+    }
+
+    // Choose your database & collection
+    collection = client.Database("movie-backend").Collection("tasks")
+    log.Println("Connected to MongoDB!")
 }
 
-// func main() {
-// 	router := mux.NewRouter()
-// 	router.Use(middleware.LoggingMiddleware)
+func main() {
+    // 1. Initialize Mongo connection
+    initMongo()
 
-// 	router.HandleFunc("/chat", handler.ChatHandler).Methods("POST", "OPTIONS")
-// 	log.Printf("Starting server on port %s", port)
-// 	if err := http.ListenAndServe(":"+port, router); err != nil {
-// 		log.Fatalf("Could not start server: %s\n", err)
-// 	}
-// }
+    // 2. Start an HTTP server (port from env or default 8080)
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+    // Simple example: handle root path
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("MongoDB connection successful!"))
+    })
+
+    log.Printf("Server running on http://localhost:%s\n", port)
+    log.Fatal(http.ListenAndServe(":"+port, nil))
+}
