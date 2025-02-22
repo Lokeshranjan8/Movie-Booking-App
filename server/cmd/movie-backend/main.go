@@ -5,59 +5,59 @@
 package main
 
 import (
-	"context"
 	"net/http"
+    "context"
 
 	//"fmt"
 	"log"
 	"os"
+
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/Lokeshranjan8/movie-backend/pkg/repository"
 )
 
-var (
-    collection *mongo.Collection
-    ctx        = context.TODO()
-)
+// var (
+//     collection *mongo.Collection
+// )
 
-func initMongo() {
+func initMongo() *mongo.Client {
     // Load env if needed
     _ = godotenv.Load()
 
-    // Use either local or env-based URI
-    uri := os.Getenv("MONGO_URI")
+    uri := os.Getenv("MONGO_DB")
     if uri == "" {
         uri = "mongodb://localhost:27017/"
     }
 
     clientOptions := options.Client().ApplyURI(uri)
-    client, err := mongo.Connect(ctx, clientOptions)
+    var err error
+    client, err := mongo.Connect(context.TODO(), clientOptions)
     if err != nil {
         log.Fatal("Failed to connect to MongoDB:", err)
     }
-
-    // Ping to confirm connection
-    if err := client.Ping(ctx, nil); err != nil {
+    if err := client.Ping(context.TODO(), nil); err != nil {
         log.Fatal("Failed to ping MongoDB:", err)
     }
-
-    // Choose your database & collection
-    collection = client.Database("movie-backend").Collection("tasks")
     log.Println("Connected to MongoDB!")
+    return client
 }
 
-func main() {
-    // 1. Initialize Mongo connection
-    initMongo()
 
-    // 2. Start an HTTP server (port from env or default 8080)
+func main() {
+    client := initMongo()
+    repository.SetClient(client)
+
     port := os.Getenv("PORT")
     if port == "" {
         port = "8080"
     }
 
-    // Simple example: handle root path
+    http.HandleFunc("/signup",repository.Signup)
+    http.HandleFunc("/login",repository.Login)
+
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("MongoDB connection successful!"))
     })
