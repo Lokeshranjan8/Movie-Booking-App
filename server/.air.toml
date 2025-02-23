@@ -1,0 +1,4 @@
+root = "."   # Set your working directory
+bin = "tmp/main" # Temporary binary
+watch_dirs = ["cmd", "pkg"]
+exclude_dirs = ["node_modules", "tmp"]
