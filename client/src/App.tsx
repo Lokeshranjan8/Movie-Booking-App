@@ -1,5 +1,5 @@
 import logo from "./assets/logo.jpeg"
-
+import Card from "./component/card"
 const App = () => {
   return (
     <>
@@ -16,6 +16,7 @@ const App = () => {
         </select>        
         <button className="bg-red-400 w-28 h-8 rounded-sm">signIn</button>
       </header>
+      <Card/>
     </>
   )
 }
