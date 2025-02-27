@@ -44,7 +44,7 @@ const App = () => {
           <option value="London">London</option>
           <option value="Detect">Detect from GPS</option>
         </select>         */}
-        <button className="bg-red-400 w-36 h-8 rounded-sm">{location && location.Lat}</button>
+        <button className="bg-red-400 w-36 h-8 rounded-sm">{location && String(location.Lat)}</button>
         
       
       <button
