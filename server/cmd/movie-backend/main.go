@@ -1,7 +1,4 @@
 //go run cmd/movie-backend/main.go  go to cmd/movie-backend the run---->> air
-//$(go env GOPATH)/bin/air -c .air.toml
-//sudo mv $(go env GOPATH)/bin/air /usr/local/bin/
-
 package main
 
 import (
@@ -19,12 +16,8 @@ import (
 	"github.com/Lokeshranjan8/movie-backend/pkg/repository"
 )
 
-// var (
-//     collection *mongo.Collection
-// )
 
 func initMongo() *mongo.Client {
-    // Load env if needed
     _ = godotenv.Load()
 
     uri := os.Getenv("MONGO_DB")
@@ -57,6 +50,10 @@ func main() {
 
     http.HandleFunc("/signup",repository.Signup)
     http.HandleFunc("/login",repository.Login)
+    http.HandleFunc("/addadmin",repository.AddAdmin)
+    http.HandleFunc("/admin/login",repository.AdminLogin)
+    http.HandleFunc("/admins",repository.GetAdmins)
+    http.HandleFunc("/getadminbyid/",repository.GetAdminById)
 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("MongoDB connection successful!"))
@@ -65,3 +62,4 @@ func main() {
     log.Printf("Server running on http://localhost:%s\n", port)
     log.Fatal(http.ListenAndServe(":"+port, nil))
 }
+//vihaan@1234
