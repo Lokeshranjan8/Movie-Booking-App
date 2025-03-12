@@ -10,7 +10,7 @@ const SignIn = () => {
       <div className="flex bg-blue-100 p-2 mt-5 rounded-xl justify-center border"> 
         <img src="https://www.pngmart.com/files/16/Google-Logo-PNG-Image.png" className="flex ml-1 h-6 mr-2 "/>
         sign in  with Gmail</div>
-       <p className="flex justify-center mt-8"> Don't have an account?  Sign up</p>
+       <button className="flex justify-center mt-8"> Sign up</button>
     </div>
     
   );
