@@ -53,6 +53,10 @@ func main() {
     http.HandleFunc("/admin/login",handler.AdminLogin)
     http.HandleFunc("/admin/all",handler.GetAdmins)
     http.HandleFunc("/getadminbyid/",handler.GetAdminById)
+    http.HandleFunc("/newBooking",handler.NewBooking)
+    http.HandleFunc("/movie/add",handler.AddMovie)
+    http.HandleFunc("/movie/all",handler.GetAllMovies)
+    //AddMovie
 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("MongoDB connection successful!"))

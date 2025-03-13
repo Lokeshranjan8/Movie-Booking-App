@@ -1,7 +1,5 @@
 package handler
 
-//	"github.com/Lokeshranjan8/movie-backend/pkg/models"
-
 import (
 	"context"
 	"encoding/json"
