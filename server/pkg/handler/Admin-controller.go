@@ -1,4 +1,4 @@
-package repository
+package handler
 
 //	"github.com/Lokeshranjan8/movie-backend/pkg/models"
 

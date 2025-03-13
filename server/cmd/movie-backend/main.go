@@ -12,8 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/Lokeshranjan8/movie-backend/pkg/repository"
+	"github.com/Lokeshranjan8/movie-backend/pkg/handler"
 )
 
 
@@ -41,19 +40,19 @@ func initMongo() *mongo.Client {
 
 func main() {
     client := initMongo()
-    repository.SetClient(client)
+    handler.SetClient(client)
 
     port := os.Getenv("PORT")
     if port == "" {
         port = "8080"
     }
 
-    http.HandleFunc("/signup",repository.Signup)
-    http.HandleFunc("/login",repository.Login)
-    http.HandleFunc("/addadmin",repository.AddAdmin)
-    http.HandleFunc("/admin/login",repository.AdminLogin)
-    http.HandleFunc("/admins",repository.GetAdmins)
-    http.HandleFunc("/getadminbyid/",repository.GetAdminById)
+    http.HandleFunc("/signup",handler.Signup)
+    http.HandleFunc("/login",handler.Login)
+    http.HandleFunc("/admin/add",handler.AddAdmin)
+    http.HandleFunc("/admin/login",handler.AdminLogin)
+    http.HandleFunc("/admin/all",handler.GetAdmins)
+    http.HandleFunc("/getadminbyid/",handler.GetAdminById)
 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("MongoDB connection successful!"))
@@ -62,4 +61,3 @@ func main() {
     log.Printf("Server running on http://localhost:%s\n", port)
     log.Fatal(http.ListenAndServe(":"+port, nil))
 }
-//vihaan@1234
