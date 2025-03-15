@@ -26,7 +26,7 @@ func AddMovie(w http.ResponseWriter, r *http.Request) {
 	tokenString = tokenString[len("Bearer "):]
 
 	claims := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
 		return SECRET_KEY2, nil
 	})
 
@@ -54,8 +54,8 @@ func AddMovie(w http.ResponseWriter, r *http.Request) {
 	movie.ReleaseDate = time.Now()
 	movie.Admin, _ = primitive.ObjectIDFromHex(adminID)
 
-	movieCollection := client.Database("movieDB").Collection("movies")
-	adminCollection := client.Database("movieDB").Collection("admin")
+	movieCollection := client.Database("movie-backend").Collection("movies")
+	adminCollection := client.Database("movie-backend").Collection("admin")
 
 	session, err := client.StartSession()
 	if err != nil {
@@ -80,7 +80,7 @@ func AddMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	json.NewEncoder(w).Encode(map[string]any{
 		"movie": movie,
 	})
 }
@@ -88,7 +88,7 @@ func AddMovie(w http.ResponseWriter, r *http.Request) {
 func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	movieCollection := client.Database("movieDB").Collection("movies")
+	movieCollection := client.Database("movie-backend").Collection("movies")
 	cursor, err := movieCollection.Find(context.Background(), bson.M{})
 	if err != nil {
 		http.Error(w, "Failed to fetch movies", http.StatusInternalServerError)

@@ -6,14 +6,16 @@ import (
 	"log"
 	"net/http"
 	"time"
-    //"github.com/gorilla/mux"
+
+	//"github.com/gorilla/mux"
 	"github.com/Lokeshranjan8/movie-backend/pkg/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
+
 	//"github.com/dgrijalva/jwt-go"
 	"github.com/golang-jwt/jwt/v4"
-
 )
 
 var client *mongo.Client
@@ -34,6 +36,7 @@ func Signup(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 
 	var user models.User
+
 	// Decode the incoming JSON request into the User struct.
 	if err := json.NewDecoder(request.Body).Decode(&user); err != nil {
 		response.WriteHeader(http.StatusBadRequest)
@@ -41,21 +44,31 @@ func Signup(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	// Generate ObjectID for User ID
+	user.ID = primitive.NewObjectID()
+
+	// Hash the Password
 	user.Password = getHash([]byte(user.Password))
+
+	// Initialize empty bookings array
+	user.Bookings = []primitive.ObjectID{}
 
 	collection := client.Database("movie-backend").Collection("user")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := collection.InsertOne(ctx, user)
+	// Insert the user
+	_, err := collection.InsertOne(ctx, user)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{"message": "` + err.Error() + `"}`))
 		return
 	}
 
-	json.NewEncoder(response).Encode(result)
+	response.WriteHeader(http.StatusCreated)
+	response.Write([]byte(`{"message": "Signup successful!"}`))
 }
+
 
 
 var SECRET_KEY = []byte("gosecretkey")
