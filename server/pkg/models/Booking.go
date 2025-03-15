@@ -7,9 +7,8 @@ import (
 
 type Booking struct {
 	ID         primitive.ObjectID    `bson:"_id,omitempty"`
-	MovieID    primitive.ObjectID    `bson:"movie,omitempty"`
-	UserID     primitive.ObjectID    `bson:"user"`
+	MovieID    string                `bson:"movie" json:"movie"`
+	UserID     string                `bson:"user" json:"user"`
 	Date       time.Time             `bson:"date"`
 	SeatNumber int                   `bson:"seatNumber"`
-
 }

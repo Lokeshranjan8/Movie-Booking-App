@@ -53,7 +53,7 @@ func main() {
     http.HandleFunc("/admin/login",handler.AdminLogin)
     http.HandleFunc("/admin/all",handler.GetAdmins)
     http.HandleFunc("/getadminbyid/",handler.GetAdminById)
-    http.HandleFunc("/newBooking",handler.NewBooking)
+    http.HandleFunc("/Booking/new",handler.NewBooking)
     http.HandleFunc("/movie/add",handler.AddMovie)
     http.HandleFunc("/movie/all",handler.GetAllMovies)
     //AddMovie
