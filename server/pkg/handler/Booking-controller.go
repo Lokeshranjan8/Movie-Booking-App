@@ -78,10 +78,6 @@ func NewBooking(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
-
-	fmt.Println("✅ Movie found:", existingMovie.Title)
-	fmt.Println("✅ Movie found:", existingUser.Name)
-
 	newBooking := models.Booking{
 		ID:         primitive.NewObjectID(),
 		MovieID:    movieID.Hex(),
@@ -103,19 +99,19 @@ func NewBooking(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("✅ Booking inserted successfully.")
+		fmt.Println("Booking inserted successfully.")
 
 		_, err = movieCollection.UpdateOne(sessCtx, bson.M{"_id": movieID}, bson.M{"$push": bson.M{"bookings": newBooking.ID}})
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("✅ Booking added to movie document.")
+		fmt.Println("Booking added to movie document.")
 
 		_, err = userCollection.UpdateOne(sessCtx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"bookings": newBooking.ID}})
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("✅ Booking added to user document.")
+		fmt.Println("Booking added to user document.")
 
 		return nil, nil
 	})
