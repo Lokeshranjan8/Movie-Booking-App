@@ -20,7 +20,7 @@ func NewBooking(w http.ResponseWriter, r *http.Request) {
 	var booking models.Booking
 	if err := json.NewDecoder(r.Body).Decode(&booking); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("❌ JSON Decode Error:", err)
+		log.Println("JSON Decode Error:", err)
 		json.NewEncoder(w).Encode(map[string]string{"message": "Invalid inputs"})
 		return
 	}
@@ -54,6 +54,8 @@ func NewBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	///////////////////////////////////////////////////////////////////
+
+
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
