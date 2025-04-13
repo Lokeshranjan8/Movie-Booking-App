@@ -3,8 +3,6 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"time"
 	"github.com/Lokeshranjan8/movie-backend/pkg/models"
@@ -101,8 +99,8 @@ func AdminLogin( w http.ResponseWriter, r *http.Request){
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["id"] = admin.ID.Hex() // Convert ObjectID to hex string.
-	claims["exp"] = time.Now().Add(7 * 24 * time.Hour).Unix() // Expires in 7 days.
+	claims["id"] = admin.ID.Hex() 
+	claims["exp"] = time.Now().Add(7 * 24 * time.Hour).Unix()
 
 	tokenString, err := token.SignedString(SECRET_KEY1)
 	if err != nil {
@@ -145,29 +143,3 @@ func GetAdmins(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{"admins": admins})
 }
 
-func GetAdminById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	idParam := params["id"]
-
-	objID, err := primitive.ObjectIDFromHex(idParam)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"message": "Invalid admin id"})
-		return
-	}
-
-	collection := client.Database("movie-backend").Collection("admin")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	var admin models.Admin
-	if err := collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&admin); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"message": "Cannot find admin"})
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"admin": admin})
-}
