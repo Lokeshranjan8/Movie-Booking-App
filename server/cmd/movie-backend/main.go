@@ -52,7 +52,6 @@ func main() {
     http.HandleFunc("/admin/add",handler.AddAdmin)
     http.HandleFunc("/admin/login",handler.AdminLogin)
     http.HandleFunc("/admin/all",handler.GetAdmins)
-    http.HandleFunc("/getadminbyid/",handler.GetAdminById)
     http.HandleFunc("/Booking/new",handler.NewBooking)
     http.HandleFunc("/movie/add",handler.AddMovie)
     http.HandleFunc("/movie/all",handler.GetAllMovies)

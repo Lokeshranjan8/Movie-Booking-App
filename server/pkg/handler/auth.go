@@ -37,27 +37,22 @@ func Signup(response http.ResponseWriter, request *http.Request) {
 
 	var user models.User
 
-	// Decode the incoming JSON request into the User struct.
 	if err := json.NewDecoder(request.Body).Decode(&user); err != nil {
 		response.WriteHeader(http.StatusBadRequest)
 		response.Write([]byte(`{"message": "Invalid request"}`))
 		return
 	}
 
-	// Generate ObjectID for User ID
 	user.ID = primitive.NewObjectID()
 
-	// Hash the Password
 	user.Password = getHash([]byte(user.Password))
 
-	// Initialize empty bookings array
 	user.Bookings = []primitive.ObjectID{}
 
 	collection := client.Database("movie-backend").Collection("user")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Insert the user
 	_, err := collection.InsertOne(ctx, user)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
